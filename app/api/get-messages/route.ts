@@ -39,6 +39,10 @@ export async function POST(request: Request) {
             messages: user[0].messages
         }, {status: 200})
     } catch (error) {
-        
+        console.log("Unable to get the messages. An unexpected error occured. ", error)
+        return Response.json({
+            success: false,
+            message: "Unable to get the messsages"
+        }, {status: 500})
     }
 }
