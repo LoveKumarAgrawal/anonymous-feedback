@@ -1,3 +1,4 @@
+"use client"
 import { MessageCard } from "@/components/MessageCard"
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
@@ -71,7 +72,7 @@ const page = () => {
                 variant: "destructive"
             })
         } finally {
-            setIsLoading(true)
+          setIsLoading(false)
         }
     }, [setIsLoading, setMessages, toast])
 
@@ -170,6 +171,8 @@ const page = () => {
         {messages.length > 0 ? (
           messages.map((message, index) => (
             <MessageCard
+            // @ts-ignore
+              key={message._id}
               message={message}
               onMessageDelete={handleMessageDelete}
             />
