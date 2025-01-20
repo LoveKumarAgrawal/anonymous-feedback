@@ -5,7 +5,7 @@ import { User } from 'next-auth';
 import { getServerSession } from 'next-auth/next';
 import { authOptions } from '../auth/[...nextauth]/options';
 
-export async function GET(request: Request) {
+export async function GET() {
   await dbConnect();
   const session = await getServerSession(authOptions);
   const _user: User = session?.user;
@@ -27,7 +27,7 @@ export async function GET(request: Request) {
 
     if (!user || user.length === 0) {
       return Response.json(
-        { message: 'User not found', success: false },
+        { message: 'No messages', success: false },
         { status: 404 }
       );
     }

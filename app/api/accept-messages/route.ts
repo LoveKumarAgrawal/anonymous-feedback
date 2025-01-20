@@ -40,7 +40,7 @@ export async function POST(request: Request) {
             message: "Message acceptance status updated successfully"
         }, {status: 200})
     } catch (error) {
-        console.log("Failed to update user status to accept messages")
+        console.log("Failed to update user status to accept messages.", error)
         return Response.json({
             success: false,
             message: "Failed to update user status to accept messages"
@@ -48,7 +48,7 @@ export async function POST(request: Request) {
     }
 }
 
-export async function GET(request: Request) {
+export async function GET() {
     await dbConnect()
 
     const session = await getServerSession(authOptions)
@@ -77,7 +77,7 @@ export async function GET(request: Request) {
             isAcceptingMessage: foundUser.isAcceptingMessage
         }, {status: 200})
     } catch (error) {
-        console.log("Error in getting messages acceptance status")
+        console.log("Error in getting messages acceptance status", error)
         return Response.json({
             success: false,
             message: "Error in getting messages acceptance status"

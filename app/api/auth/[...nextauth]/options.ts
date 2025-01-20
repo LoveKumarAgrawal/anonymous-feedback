@@ -13,13 +13,15 @@ export const authOptions: NextAuthOptions = {
                 email: { label: "Email", type: "text"},
                 password: { label: "Password", type: "password" }
             },
-            async authorize(credentials: any): Promise<any> {
+            async authorize(credentials: any): Promise<any>{
+                if (!credentials) {
+                    throw new Error("No credentials provided");
+                }
                 await dbConnect()
                 try {
                     const user = await UserModel.findOne({
                         $or: [
                             {"email": credentials.identifier},
-                            {"username": credentials.identifier}
                         ]
                     })
 
@@ -29,12 +31,16 @@ export const authOptions: NextAuthOptions = {
 
                    const isPasswordCorrect =  await bcrypt.compare(credentials.password, user.password)
                    if(isPasswordCorrect) {
+                    console.log(user)
                     return user
                    } else {
                     throw new Error("Invalid Password")
                    }
-                } catch (error: any) {
-                    throw new Error(error)
+                } catch (error: unknown) {
+                    if (error instanceof Error) {
+                        throw new Error(error.message);
+                    }
+                    throw new Error("An unexpected error occurred");
                 }
             } 
         })
