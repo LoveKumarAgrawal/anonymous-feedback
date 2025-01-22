@@ -1,10 +1,16 @@
 import dbConnect from "@/lib/dbConnect";
 import { getServerSession } from "next-auth";
-import { authOptions } from "../../auth/[...nextauth]/options";
+import { authOptions } from "../auth/[...nextauth]/options";
 import UserModel from "@/model/User";
 
-export async function DELETE(request: Request, { params }: { params: { messageId: string } }) {
-    const messageId = params.messageId;
+export async function DELETE(request: Request) {
+  const { messageId } = await request.json();
+  if (!messageId) {
+      return Response.json(
+          { message: 'Message ID is required', success: false },
+          { status: 400 }
+      );
+  }
     await dbConnect()
 
     const session = await getServerSession(authOptions)

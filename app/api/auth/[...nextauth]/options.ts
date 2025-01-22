@@ -3,6 +3,16 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 import dbConnect from "@/lib/dbConnect";
 import UserModel from "@/model/User";
+import { User as NextAuthUser } from "next-auth";
+
+interface User {
+    _id: string;
+    username: string;
+    email: string;
+    password: string;
+    isAcceptingMessage: boolean;
+    __v: number;
+}
 
 export const authOptions: NextAuthOptions = {
     providers: [
@@ -13,10 +23,10 @@ export const authOptions: NextAuthOptions = {
                 email: { label: "Email", type: "text" },
                 password: { label: "Password", type: "password" }
             },
-            async authorize(credentials: any): Promise<any>{
+            async authorize(credentials: any): Promise <NextAuthUser | null>{
                 await dbConnect()
                 try {
-                    const user = await UserModel.findOne({ email: credentials.identifier })
+                    const user: User | null = await UserModel.findOne({ email: credentials?.email })
 
                     if (!user) {
                         throw new Error("No user found with this email")
@@ -26,7 +36,12 @@ export const authOptions: NextAuthOptions = {
                     }
                     const isPasswordCorrect = await bcrypt.compare(credentials?.password, user.password)
                     if (isPasswordCorrect) {
-                        return user
+                        return {
+                            ...user,
+                            isAcceptingMessages: user.isAcceptingMessage,
+                            username: user.username,
+                            id: user._id.toString(),
+                        }
                     } else {
                         throw new Error("Invalid Password")
                     }
@@ -50,7 +65,7 @@ export const authOptions: NextAuthOptions = {
         },
         async jwt({ token, user }) {
             if (user) {
-                token._id = user._id?.toString()
+                token._id = user.id
                 token.isAcceptingMessages = user.isAcceptingMessages
                 token.username = user.username
             }
