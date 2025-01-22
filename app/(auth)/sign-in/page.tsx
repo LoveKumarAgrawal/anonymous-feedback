@@ -24,7 +24,7 @@ export default function SignInForm() {
   const form = useForm<z.infer<typeof signInSchema>>({
     resolver: zodResolver(signInSchema),
     defaultValues: {
-      email: '',
+      identifier: '',
       password: '',
     },
   });
@@ -33,7 +33,7 @@ export default function SignInForm() {
   const onSubmit = async (data: z.infer<typeof signInSchema>) => {
     const result = await signIn('credentials', {
       redirect: false,
-      email: data.email,
+      identifier: data.identifier,
       password: data.password,
     });
 
@@ -70,7 +70,7 @@ export default function SignInForm() {
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
             <FormField
-              name="email"
+              name="identifier"
               control={form.control}
               render={({ field }) => (
                 <FormItem>

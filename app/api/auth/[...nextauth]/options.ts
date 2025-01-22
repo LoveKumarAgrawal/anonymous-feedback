@@ -16,13 +16,15 @@ export const authOptions: NextAuthOptions = {
             async authorize(credentials: any): Promise<any>{
                 await dbConnect()
                 try {
-                    const user = await UserModel.findOne({ email: credentials.email })
+                    const user = await UserModel.findOne({ email: credentials.identifier })
 
                     if (!user) {
                         throw new Error("No user found with this email")
                     }
-
-                    const isPasswordCorrect = await bcrypt.compare(credentials.password, user.password)
+                    if(!credentials?.password) {
+                        return null
+                    }
+                    const isPasswordCorrect = await bcrypt.compare(credentials?.password, user.password)
                     if (isPasswordCorrect) {
                         return user
                     } else {
