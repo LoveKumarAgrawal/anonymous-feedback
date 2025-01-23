@@ -5,7 +5,6 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { useDebounceCallback }from "usehooks-ts"
 import * as z from 'zod';
 import { Button } from '@/components/ui/button';
 import {
@@ -21,13 +20,15 @@ import { Loader2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { signUpSchema } from '@/schemas/signUpSchema';
 import { useToast } from '@/hooks/use-toast';
+import useDebouncedCallback from '@/hooks/useDebouncedCallback';
+
 
 export default function SignUpForm() {
   const [username, setUsername] = useState('');
   const [usernameMessage, setUsernameMessage] = useState('');
   const [isCheckingUsername, setIsCheckingUsername] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const debounced = useDebounceCallback(setUsername, 300);
+  const debounced = useDebouncedCallback(setUsername, 300);
 
   const router = useRouter();
   const { toast } = useToast();
